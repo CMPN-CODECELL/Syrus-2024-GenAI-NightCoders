@@ -18,6 +18,7 @@ import DoctorAppointments from './pages/doctor/DoctorAppointments';
 import ViewDoctors from './pages/ViewDoctors';
 import ContactUs from './pages/ContactUs';
 import Test from './pages/Test';
+import HairTest from './pages/HairTest';
 
 
 function App() {
@@ -111,6 +112,12 @@ function App() {
         element={
         <ProtectedRoute>
           <Test/>
+        </ProtectedRoute>
+        }/>
+        <Route path='/HairTest' 
+        element={
+        <ProtectedRoute>
+          <HairTest/>
         </ProtectedRoute>
         }/>
       </Routes>

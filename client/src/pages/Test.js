@@ -164,7 +164,7 @@ const Test = () => {
                             <p className="mb-2 text-xs md:text-sm font-bold text-black"><span className="">Click to upload</span> or drag and drop</p>
                             <p className="text-xs md:text-sm text-center font-bold text-black">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
                         </div>
-                        <input type="file" onChange={handleFileChange} name="image" accept="image/*" id="image-upload" type="file" className="hidden" />
+                        <input type="file" onChange={handleFileChange} name="image" accept="image/*" id="image-upload"  className="hidden" />
                     </label>
                     <div className="flex items-center justify-center m-2 w-full">
                       {imageShow && <img src={imageShow} id="output" width="200" alt="Selected" />}
