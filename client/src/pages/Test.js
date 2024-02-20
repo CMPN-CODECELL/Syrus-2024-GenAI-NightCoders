@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Layout from '../components/Layout.js'
 import Appointment from '../images/appointment.jpg'
+import Footer from '../components/Footer.js';
 
 const Test = () => {
   const [image, setImage] = useState(null);
@@ -69,6 +70,7 @@ const Test = () => {
             </div>
             </div>
           </section>
+          <Footer></Footer>
       </Layout>
     </>
   );

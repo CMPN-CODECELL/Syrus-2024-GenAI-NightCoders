@@ -4,6 +4,8 @@ import Layout from '../components/Layout.js'
 import Appointment from '../images/appointment.jpg'
 import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer';
 import { Document, Page, Text } from '@react-pdf/renderer';
+import Footer from '../components/Footer.js';
+
 
 const HairTest = () => {
   const [hairImage, setHairImage] = useState(null);
@@ -54,7 +56,7 @@ const HairTest = () => {
               <div>
                 <button
                     onClick={generatePDF}
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 ml-8"
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5"
                 >
                     Generate Report
                 </button>
@@ -112,6 +114,7 @@ const HairTest = () => {
             </div>
             </div>
           </section>
+          <Footer></Footer>
       </Layout>
     </>
   );
