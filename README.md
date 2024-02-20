@@ -33,7 +33,7 @@ The project stands out due to its groundbreaking innovations in the health care 
 # Technologies Used
 - Frontend: React.js, BootStrap
 - Backend:  Python,Langchain,Flask,Node js,Sklearn,Tensor/Pytorch
-- API:Gemini AI ![Gemini_language_model_logo](https://github.com/CMPN-CODECELL/Syrus-2024-GenAI-NightCoders/assets/82360563/a0c4dffe-d459-4826-ad17-a57a4cc66bf5)
+- API:Gemini AI ![Gemini_language_model_logo](https://github.com/CMPN-CODECELL/Syrus-2024-GenAI-NightCoders/assets/82360563/a0c4dffe-d459-4826-ad17-a57a4cc66bf5)width="200" height="100"
 
 - Database: MongoDB Atlas
 - Model: Llama,Gen-AI
