@@ -10,6 +10,8 @@ import cv2
 import numpy as np 
 import openai
 
+
+
 stripe.api_key = "sk_test_51Mf5iMSHP7cyCBSwbnncFvTrRnH4J0rwq5WJQklUaTtMnPK3KOA2v08cRX457eu1GY4nY67Yst9SXegWba4wc11L00b5LLpjmB"
 
 YOUR_DOMAIN = "http://localhost:5082"
@@ -23,17 +25,19 @@ UPLOAD_FOLDER = './UPLOAD_FOLDER/'
 
 app = Flask(__name__)
 
-#---------------------------------------- Database ---------------------------------------------
+#----------------------------------------- CORS ------------------------------------------------
 
+from flask_cors import CORS
 
+CORS(app)
 
 #-----------------------------------------------------------------------------------------------
 
 #----------------------------------------- Home Page -------------------------------------------
 
-@app.route('/',methods=['GET','POST'])
-def index():
-    return render_template('home.html')
+# @app.route('/',methods=['GET','POST'])
+# def index():
+#     return render_template('home.html')
 
 #-----------------------------------------------------------------------------------------------
 
@@ -67,22 +71,22 @@ def predict():
 
 #-------------------------------------- Appointment --------------------------------------------
 
-@app.route('/Appoint',methods=['GET','POST'])
-def Appointment():
-    return render_template()
+# @app.route('/Appoint',methods=['GET','POST'])
+# def Appointment():
+#     return render_template()
 
 #-----------------------------------------------------------------------------------------------
 
 # ----------------------------------------- Payment --------------------------------------------
 
-@app.route('/cancel',methods=['GET','POST'])
-def cancel():
-    return render_template('cancel.html')
+# @app.route('/cancel',methods=['GET','POST'])
+# def cancel():
+#     return render_template('cancel.html')
 
 
-@app.route('/success',methods=['GET','POST'])
-def success():
-    return render_template('success.html')
+# @app.route('/success',methods=['GET','POST'])
+# def success():
+#     return render_template('success.html')
 
 
 @app.route('/Donate',methods=["POST"])
@@ -108,38 +112,38 @@ def create_checkout_session():
 
 #--------------------------------------Skin Model -----------------------------------------------
 
-@app.route('/Test',methods=['GET','POST'])
-def test():
-     if request.method == 'POST':
-        filename = UPLOAD_FOLDER +str(int(np.random.randint(0, 5000))) + '.jpg'
-        file = request.files['image']
-        #file = request.form['image']
+# @app.route('/Test',methods=['GET','POST'])
+# def test():
+#      if request.method == 'POST':
+#         filename = UPLOAD_FOLDER +str(int(np.random.randint(0, 5000))) + '.jpg'
+#         file = request.files['image']
+#         #file = request.form['image']
 
-        # filename = file.filename
-        file.save(filename)
-        print('File saved', filename)
-        print(str(filename))
+#         # filename = file.filename
+#         file.save(filename)
+#         print('File saved', filename)
+#         print(str(filename))
 
-        # with open(str(filename), 'rb') as f:
-        #     data = f.read()
-        # print(data)
-        pred = predict_class(filename)
+#         # with open(str(filename), 'rb') as f:
+#         #     data = f.read()
+#         # print(data)
+#         pred = predict_class(filename)
 
-        my_dict = pred
+#         my_dict = pred
 
-        highest_key = None
-        highest_value = float('-inf')  # set to lowest possible value initially
-        for key, value in my_dict.items():
-            if value > highest_value:
-                highest_value = value
-                highest_key = key
+#         highest_key = None
+#         highest_value = float('-inf')  # set to lowest possible value initially
+#         for key, value in my_dict.items():
+#             if value > highest_value:
+#                 highest_value = value
+#                 highest_key = key
 
-        #print(highest_key)
-        disease = highest_key
+#         #print(highest_key)
+#         disease = highest_key
 
-        return render_template('test1.html',disease=disease)
+#         return render_template('test1.html',disease=disease)
 
-     return render_template('test1.html')
+#      return render_template('test1.html')
  
 
 def predict_class(image):
@@ -170,6 +174,40 @@ def predict_class(image):
 
     return new_dict
 
+#--------------------------------------- test ---------------------------------------------------
+
+UPLOAD_FOLDER = 'UPLOAD_FOLDER/'  # Define your upload folder here
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+@app.route('/Test', methods=['POST'])
+def upload_image():
+    if request.method == 'POST':
+        filename = UPLOAD_FOLDER + str(int(np.random.randint(0, 5000))) + '.jpg'
+        file = request.files['image']
+
+        if file:
+            file.save(filename)
+            print('File saved:', filename)
+
+        # Perform prediction on the uploaded image
+            pred = predict_class(filename)
+            highest_key = None
+            highest_value = float('-inf')  # set to lowest possible value initially
+            for key, value in pred.items():
+               if value > highest_value:
+                  highest_value = value
+                  highest_key = key
+
+            # The predicted disease
+            disease = highest_key
+            print(disease)
+            # return jsonify({'message': 'Image uploaded successfully', 'filename': filename})
+            return jsonify({'prediction': disease})
+        else:
+            return jsonify({'error': 'No file part'})
 
 #------------------------------------------------------------------------------------------------
 
