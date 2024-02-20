@@ -19,6 +19,9 @@ import ViewDoctors from './pages/ViewDoctors';
 import ContactUs from './pages/ContactUs';
 import Test from './pages/Test';
 import HairTest from './pages/HairTest';
+import DoctorAI from './pages/DoctorAi';
+import NutritionExpert from './pages/NutritionExpert';
+import AnalyzeReport from './pages/AnalyzeReport';
 
 
 function App() {
@@ -118,6 +121,24 @@ function App() {
         element={
         <ProtectedRoute>
           <HairTest/>
+        </ProtectedRoute>
+        }/>
+        <Route path='/doctorAI' 
+        element={
+        <ProtectedRoute>
+          <DoctorAI/>
+        </ProtectedRoute>
+        }/>
+        <Route path='/nutrition' 
+        element={
+        <ProtectedRoute>
+          <NutritionExpert/>
+        </ProtectedRoute>
+        }/>
+        <Route path='/reportAnalyze' 
+        element={
+        <ProtectedRoute>
+          <AnalyzeReport/>
         </ProtectedRoute>
         }/>
       </Routes>

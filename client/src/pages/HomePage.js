@@ -7,6 +7,7 @@ import Threefoldway from '../components/Threefoldway.js';
 import Donation from '../components/Donation.js';
 import Footer from '../components/Footer.js'
 import Youtube from '../components/Youtube.js';
+import Products from '../components/Products.js';
 
 const HomePage = () => {
   
@@ -16,6 +17,7 @@ const HomePage = () => {
       <Layout>
         <IntroTvacha/>
         <SliderHome/>
+        <Products/>
         <Journey/>
         <Threefoldway/>
         <Donation/>

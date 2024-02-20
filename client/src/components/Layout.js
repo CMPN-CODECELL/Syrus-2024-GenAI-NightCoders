@@ -69,7 +69,7 @@ const doctorMenu =[
                 {/* Website Logo */}
                 <div className="flex items-center">
                         <img src={Logo} className="rounded-full w-14 h-14 mx-2 border-2" alt="Logo" />
-                        <h1 className="text-black mx-1 my-1 text-2xl">Tvacha</h1>
+                        {/* <h1 className="text-black mx-1 my-1 text-2xl">Tvacha</h1> */}
                 </div>
 
                 {/* Navigation Links */}
