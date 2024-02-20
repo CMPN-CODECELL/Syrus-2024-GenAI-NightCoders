@@ -1,0 +1,20 @@
+# Python bytecode
+__pycache__/
+
+# Environment configuration
+.env
+
+# Logs
+*.log
+
+# Generated files
+/instance/
+/venv/
+/build/
+
+# IDE-specific files
+.vscode/
+.idea/
+
+# Compiled Python files
+*.pyc

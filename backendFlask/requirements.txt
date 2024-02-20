@@ -1,0 +1,15 @@
+flask==2.2.3
+keras==2.10.0
+Keras-Preprocessing==1.1.2
+nltk==3.7
+openai==0.27.2
+opencv-python==4.7.0.72
+openpyxl==3.0.9
+pandas==1.2.3
+protobuf==3.20.3
+Pyrebase4==4.6.0
+scikit-learn==1.1.1
+scipy==1.7.3
+tensorflow==2.10.0
+numpy==1.24.2
+stripe==5.2.0

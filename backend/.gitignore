@@ -1,0 +1,16 @@
+# Dependency directories
+/node_modules
+
+# Logs
+npm-debug.log
+yarn-error.log
+
+# Environment configuration (e.g., for dotenv)
+.env
+
+# IDE-specific files
+.vscode/
+.idea/
+
+# System files
+.DS_Store
