@@ -54,7 +54,7 @@ The project stands out due to its groundbreaking innovations in the health care 
 ![WhatsApp Image 2024-02-21 at 14 28 31_c02d2da1](https://github.com/CMPN-CODECELL/Syrus-2024-GenAI-NightCoders/assets/113839911/7f895274-768c-4cfc-bd16-9e7cf9fc1f3d)
 
 # Future Scope
--Fine Tuning a Skin and Hair Test Module
--Fine Tuning a Report Analyzer to make reports more structured and concise
--Adding a Crew AI in Doctor System
+- Fine Tuning a Skin and Hair Test Module
+- Fine Tuning a Report Analyzer to make reports more structured and concise
+- Adding a Crew AI in Doctor System
 
