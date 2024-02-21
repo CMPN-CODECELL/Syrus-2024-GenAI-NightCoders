@@ -1,5 +1,5 @@
 from flask import Flask ,request,render_template,redirect,jsonify
-import pyrebase
+# import pyrebase
 import stripe
 from mail import sendEmail
 from keras.applications.vgg19 import VGG19
@@ -9,8 +9,20 @@ import os
 import cv2
 import numpy as np 
 import openai
+from dotenv import load_dotenv
+import os
+import google.generativeai as genai
+from PIL import Image
+# from crewai import Agent, Task, Crew, Process
+# from langchain_google_vertexai import VertexAI
+# from langchain.tools import DuckDuckGoSearchRun
+from doc import process_and_respond
+load_dotenv()  # load all the environment variables
 
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
+api_key= "AIzaSyBjRjju8brWmATwq7OB4aP84uBWzq5lBtc"
+genai.configure(api_key="AIzaSyBjRjju8brWmATwq7OB4aP84uBWzq5lBtc")
 
 stripe.api_key = "sk_test_51Mf5iMSHP7cyCBSwbnncFvTrRnH4J0rwq5WJQklUaTtMnPK3KOA2v08cRX457eu1GY4nY67Yst9SXegWba4wc11L00b5LLpjmB"
 
@@ -88,6 +100,72 @@ def predict():
 # def success():
 #     return render_template('success.html')
 
+@app.route('/Doc', methods=['POST'])
+def process_symptoms():
+    search_tool = DuckDuckGoSearchRun()
+
+    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.1)
+    model2 = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.4)
+
+    symptoms = request.json.get('symptoms')  # assuming symptoms are sent in JSON format
+
+    # Create Agents
+    Assistant = Agent(
+        role='Senior Nurse',
+        goal=f"Discover and examine Disease from symptoms like {symptoms}",
+        backstory="You're an expert Nurse help doctor to find what potential problem is patient is suffering.",
+        verbose=True,
+        allow_delegation=False,
+        tools=[search_tool],
+        llm=model
+    )
+
+    critic = Agent(
+        role='Expert Doctor',
+        goal="Give constructive feedback on post drafts",
+        backstory="You're an expert Doctor and provide an instant before they reach hospital medical help to emergency patients.",
+        verbose=True,
+        allow_delegation=True,
+        llm=model2
+    )
+
+    # Create Tasks
+    task_search = Task(
+        description="Compile a report listing  2 causes for symptoms",
+        agent=Assistant
+    )
+
+    task_critique = Task(
+        description="Provide medical advise and if serious symptoms then advise life-saving medical tips till the patient reach the hospital safely.",
+        agent=critic
+    )
+
+    # Create Crew
+    crew = Crew(
+        agents=[Assistant, critic],
+        tasks=[task_search, task_critique],
+        verbose=2,
+        process=Process.sequential 
+    )
+
+    # Get your crew to work!
+    result = crew.kickoff()
+
+
+
+@app.route('/Analyze', methods=['POST'])
+def proces():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file uploaded'})
+
+    pdf_docs = request.files.getlist('file')
+    if not pdf_docs:
+        return jsonify({'error': 'No file uploaded'})
+
+    response = process_and_respond(pdf_docs)
+    print(response)
+    return jsonify({'response': response})
+
 
 @app.route('/Donate',methods=["POST"])
 def create_checkout_session():
@@ -112,39 +190,85 @@ def create_checkout_session():
 
 #--------------------------------------Skin Model -----------------------------------------------
 
-# @app.route('/Test',methods=['GET','POST'])
-# def test():
-#      if request.method == 'POST':
-#         filename = UPLOAD_FOLDER +str(int(np.random.randint(0, 5000))) + '.jpg'
-#         file = request.files['image']
-#         #file = request.form['image']
 
-#         # filename = file.filename
-#         file.save(filename)
-#         print('File saved', filename)
-#         print(str(filename))
+def get_gemini_response(input, image, prompt):
+    model = genai.GenerativeModel('gemini-pro-vision')
+    response = model.generate_content([input, image[0], prompt])
+    print("3")
+    return response.text
 
-#         # with open(str(filename), 'rb') as f:
-#         #     data = f.read()
-#         # print(data)
-#         pred = predict_class(filename)
+def input_image_setup(uploaded_file):
+    # Check if a file has been uploaded
+    if uploaded_file is not None:
+        # Read the file into bytes
+        bytes_data = uploaded_file.getvalue()
 
-#         my_dict = pred
+        image_parts = [
+            {
+                "mime_type": uploaded_file.type,  # Get the mime type of the uploaded file
+                "data": bytes_data
+            }
+        ]
+        print("2")
+        return image_parts
+    else:
+        raise FileNotFoundError("No file uploaded")
+    
+@app.route('/process', methods=['POST'])
+def process():
+    #input = request.form['input']
+   if request.method == 'POST':
+        filename = UPLOAD_FOLDER + str(int(np.random.randint(0, 5000))) + '.jpg'
+        file = request.files['image']
 
-#         highest_key = None
-#         highest_value = float('-inf')  # set to lowest possible value initially
-#         for key, value in my_dict.items():
-#             if value > highest_value:
-#                 highest_value = value
-#                 highest_key = key
+        if file:
+            file.save(filename)
+            print('File saved:', filename)
 
-#         #print(highest_key)
-#         disease = highest_key
+        # Perform prediction on the uploaded image
+           # pred = predict_class(filename)
+            print("0")
+            #pred = input_image_setup(filename)
 
-#         return render_template('test1.html',disease=disease)
+            
+        # Read the file into bytes
+            # bytes_data = filename.getvalue()
+            with open(filename, 'rb') as f:
+                bytes_data = f.read()
 
-#      return render_template('test1.html')
- 
+            image_parts = [
+                {
+                    "mime_type": filename.type,  # Get the mime type of the uploaded file
+                    "data": bytes_data
+                }
+            ]
+            print("2")
+            pred = image_parts
+
+            print("10")
+   
+            input_prompt = """
+            You are an expert in nutritionist where you need to see the food items from the image
+            and calculate the total calories, also provide the details of every food items with calories intake
+            is below format
+
+            1. Item 1 - no of calories
+            2. Item 2 - no of calories
+            ----
+            ----
+
+            Also suggest whether the food is healthy to eat and if not then what must be added or removed in dish to make it health and nutrition rich.
+            If possible Suggest food that can be added to dish which makes it healthy.
+            """
+            input = ""
+            print("1")
+            response = get_gemini_response(input_prompt, pred, input)
+            print(response)
+            return jsonify({'response': response})
+        else:
+           return jsonify({'error': 'No file uploaded'})
+
+
 
 def predict_class(image):
     classes = {0:'Acne/Rosacea',
@@ -211,33 +335,50 @@ def upload_image():
 
 #------------------------------------------------------------------------------------------------
 
-@app.route('/hairtest',methods=['GET','POST'])
+@app.route('/Hairtest',methods=['GET','POST'])
 def hair():
      if request.method == 'POST':
         filename = UPLOAD_FOLDER +str(int(np.random.randint(0, 5000))) + '.jpg'
         file = request.files['image']
         
-        file.save(filename)
-        print('File saved', filename)
-        print(str(filename))
+        # file.save(filename)
+        # print('File saved', filename)
+        # print(str(filename))
 
-        pred = predict_hair(filename)
+        # pred = predict_hair(filename)
 
-        my_dict = pred
+        # my_dict = pred
 
-        highest_key = None
-        highest_value = float('-inf')  # set to lowest possible value initially
-        for key, value in my_dict.items():
-            if value > highest_value:
-                highest_value = value
-                highest_key = key
+        # highest_key = None
+        # highest_value = float('-inf')  # set to lowest possible value initially
+        # for key, value in my_dict.items():
+        #     if value > highest_value:
+        #         highest_value = value
+        #         highest_key = key
 
-        #print(highest_key)
-        disease = highest_key
+        # #print(highest_key)
+        # disease = highest_key
 
-        return render_template('hair.html',disease=disease)
+        if file:
+            file.save(filename)
+            print('File saved:', filename)
 
-     return render_template('hair.html')
+        # Perform prediction on the uploaded image
+            pred = predict_hair(filename)
+            highest_key = None
+            highest_value = float('-inf')  # set to lowest possible value initially
+            for key, value in pred.items():
+               if value > highest_value:
+                  highest_value = value
+                  highest_key = key
+
+            # The predicted disease
+            disease = highest_key
+            print(disease)
+            # return jsonify({'message': 'Image uploaded successfully', 'filename': filename})
+            return jsonify({'prediction': disease})
+        else:
+            return jsonify({'error': 'No file part'})
  
 def predict_hair(image):
     classes = {0:'Alopecia Areata',

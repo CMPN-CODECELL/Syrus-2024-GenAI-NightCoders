@@ -5,30 +5,55 @@ import Typewriter from "typewriter-effect";
 import Footer from '../components/Footer.js';
 
 const NutritionExpert = () => {
+    // const [image, setImage] = useState(null);
+    // const [data, setData] = useState(null);
+
+    // const handleImageUpload = (event) => {
+    //     setImage(event.target.files[0]);
+    // };
+
+    // const handleSubmit = async (event) => {
+    //     event.preventDefault();
+
+    //     const formData = new FormData();
+    //     formData.append('image', image);
+
+    //     try {
+    //         const response = await axios.post('http://localhost:8001/process', formData, {
+    //             headers: {
+    //                 'Content-Type': 'multipart/form-data',
+    //             },
+    //         });
+    //         setData(response.data.percentage_malnutrition);
+    //         console.log(response.data); // Handle successful response
+    //     } catch (error) {
+    //         console.error(error); // Handle errors
+    //     }
+    // };
     const [image, setImage] = useState(null);
-    const [data, setData] = useState(null);
-
-    const handleImageUpload = (event) => {
-        setImage(event.target.files[0]);
+    const [imageShow, setImageShow] = useState(null);
+    const [prediction, setPrediction] = useState(null);
+  
+  
+    const handleFileChange = (e) => {
+      const file = e.target.files[0];
+      setImage(file);
+      const imageUrl = URL.createObjectURL(file);
+      setImageShow(imageUrl);
     };
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        const formData = new FormData();
-        formData.append('image', image);
-
-        try {
-            const response = await axios.post('http://localhost:5000/upload', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            setData(response.data.percentage_malnutrition);
-            console.log(response.data); // Handle successful response
-        } catch (error) {
-            console.error(error); // Handle errors
-        }
+  
+    const handleUpload = () => {
+      const formData = new FormData();
+      formData.append('image', image);
+  
+      axios.post('http://localhost:8001/process', formData)
+        .then(response => {
+          console.log(response.data);
+          setPrediction(response.data.prediction);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
     };
 
     return (
@@ -39,51 +64,18 @@ const NutritionExpert = () => {
                     <p className="text-center font-bold text-2xl mt-2 mb-5">Upload a Image to get nutritional support</p>
                     <div className="flex flex-col md:flex-row items-center justify-center">
                         <div className="md:w-8/12 justify-center p-3 lg:ml-2 lg:w-5/12">
-                            <form className="mt-10" onSubmit={handleSubmit}>
-                                <div className="mb-4">
-                                    <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                                        <div className="space-y-1 text-center">
-                                            <svg
-                                                className="mx-auto h-12 w-12 text-gray-400"
-                                                stroke="currentColor"
-                                                fill="none"
-                                                viewBox="0 0 48 48"
-                                                aria-hidden="true"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M20 8v6m0 0v6m0-6h6m-6 0H8a4 4 0 00-4 4v24a4 4 0 004 4h32a4 4 0 004-4V20a4 4 0 00-4-4h-6l-6-6H8a4 4 0 00-4 4v24"
-                                                />
-                                            </svg>
-                                            <div className="flex text-sm text-gray-600 ml-4">
-                                                <label
-                                                    htmlFor="file-upload"
-                                                    className="relative cursor-pointer rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
-                                                >
-                                                    <span>Upload a file</span>
-                                                    <input
-                                                    id="file-upload"
-                                                    name="file-upload"
-                                                    type="file"
-                                                    className="sr-only"
-                                                    onChange={handleImageUpload}
-                                                    accept=".jpg, .jpeg, .png, .gif"
-                                                    />
-                                                </label>
-                                            </div>
-                                            <p className="text-xs text-gray-500">JPEG, PNG, GIF up to 10MB</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button
-                                    type="submit"
-                                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                                >
-                                    Upload
-                                </button>
-                            </form>
+                            
+                        <label htmlFor="image-upload" className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-[#F9D0BE]">
+                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg aria-hidden="true" className="w-10 h-10 mb-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+                            <p className="mb-2 text-xs md:text-sm font-bold text-black"><span className="">Click to upload</span> or drag and drop</p>
+                            <p className="text-xs md:text-sm text-center font-bold text-black">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+                        </div>
+                        <input type="file" onChange={handleFileChange} name="image" accept="image/*" id="image-upload"  className="hidden" />
+                    </label>                  
+                  
+                     <button onClick={handleUpload}  className="mt-3 bg-[rgb(63,61,86)] text-white inline-block w-full rounded px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_rgba(0,0,0,0.2)] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(0,0,0,0.1),0_4px_18px_0_rgba(0,0,0,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(0,0,0,0.1),0_4px_18px_0_rgba(0,0,0,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(0,0,0,0.1),0_4px_18px_0_rgba(0,0,0,0.2)]">Upload</button>
+
                         </div>
 
                         <div className="md:w-8/12 justify-center p-3 lg:ml-2 lg:w-5/12">

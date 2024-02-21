@@ -21,12 +21,12 @@ const AnalyzeReport = () => {
         formData.append('file', file);
     
         try {
-          const response = await axios.post('http://localhost:5000/upload', formData, {
+          const response = await axios.post('http://localhost:8001/Analyze', formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
           });
-          setData(response.data.percentage_malnutrition);
+          setData(response.data.response);
           console.log(response.data); // Handle successful response
         } catch (error) {
           console.error(error); // Handle errors
@@ -89,22 +89,26 @@ const AnalyzeReport = () => {
                         </form>
                     </div>
 
-                    <div className="md:w-8/12 justify-center p-3 lg:ml-2 lg:w-5/12">
-                        <div className="bg-white rounded-lg shadow-md p-4 h-80 overflow-y-auto">
-                            <Typewriter
-                                onInit={(typewriter) => {
-                                    typewriter
-                                        .typeString("What is Lorem Ipsum Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum Why do we us It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like). Where does it come from"
-                                        )
-                                        .start();
-                                }}  
-                                options={{
-                                    delay: 1, // Reduce the delay between each character
-                                }}
-                            />
+                    {/* {data && (
+                    <div className="mt-2">
+                        <h1 className="text-xl mt-2 text-center">Disease Detected</h1>
+                        <div className="w-full mt-2 bg-green-100 border border-blue-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                        <span className="block sm:inline text-center"><strong>{data}</strong></span>
                         </div>
                     </div>
+                    )} */}
 
+                    <div className="md:w-8/12 justify-center p-3 lg:ml-2 lg:w-5/12">
+                            <div className="bg-white rounded-lg shadow-md p-4 h-80 overflow-y-auto">
+                            {data && (
+                    <div className="mt-2">
+                        <div className="w-full mt-2 bg-green-100 border border-blue-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                        <span className="block sm:inline text-center"><strong>{data}</strong></span>
+                        </div>
+                    </div>
+                    )}
+                            </div>
+                        </div>
                 </div>
             </div>
           </section>
